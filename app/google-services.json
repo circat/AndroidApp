@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "742599792491",
+    "firebase_url": "https://geodata1-27120.firebaseio.com",
+    "project_id": "geodata1-27120",
+    "storage_bucket": "geodata1-27120.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742599792491:android:b10eea5c444540cc",
+        "android_client_info": {
+          "package_name": "geo11.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "742599792491-aoa27cofnenv1ofit7nt6ujg3r74lvoe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSXUNIZhwo4GHwXELGEx3jrpxewtZW4E4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
