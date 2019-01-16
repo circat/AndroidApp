@@ -5,4 +5,11 @@
     <string name="test_password">testpassword</string>
     <string name="firebase_path">location</string>
     <string name="firebase_path2">degree</string>
+    <string name="title_activity_login">Login</string>
+    <string name="userText">userText</string>
+    <string name="softButton">softButton</string>
+    <string name="statusText">statusText</string>
+    <string name="emailText">emailText</string>
+    <string name="passwordText">passwordText</string>
+
 </resources>

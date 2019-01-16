@@ -2,25 +2,26 @@ package geo11.app;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
+
+import android.support.annotation.NonNull;
+
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.content.Intent;
+
 import android.location.LocationManager;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.widget.Toast;
+
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.hardware.SensorEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.hardware.SensorEventListener;
-import android.os.Bundle;
+
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,22 +32,15 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.os.IBinder;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.util.Log;
-import android.Manifest;
+
 import android.location.Location;
-import android.app.Notification;
-import android.content.pm.PackageManager;
-import android.app.PendingIntent;
-import android.app.Service;
+
 
 
 public class MainActivity extends Activity implements SensorEventListener {
@@ -61,7 +55,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextView DegreeTV;
 
     private static final int PERMISSIONS_REQUEST = 100;
-
+    private FirebaseAuth fbAuth;
+    private FirebaseAuth.AuthStateListener authListener;
+    private static final String TAG = "FSignIn";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +73,27 @@ public class MainActivity extends Activity implements SensorEventListener {
         // initialize your android device sensor capabilities
         SensorManage = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        buildNotification();
-        loginToFirebase();
 
+
+        fbAuth = FirebaseAuth.getInstance();
+
+
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if (user != null) {
+
+
+                } else {
+
+                }
+            }
+        };
+
+        loginToFirebase();
         //Check whether GPS tracking is enabled//
 
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -95,20 +109,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         //If the location permission has been granted, then start the TrackerService//
 
 
-    }
-//Create the persistent notification//
-
-    private void buildNotification() {
-        String stop = "stop";
-        registerReceiver(stopReceiver, new IntentFilter(stop));
-        PendingIntent broadcastIntent = PendingIntent.getBroadcast(
-                this, 0, new Intent(stop), PendingIntent.FLAG_UPDATE_CURRENT);
-
-/*// Create the persistent notification//
-        Notification notification = new Notification.Builder(Context)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.tracking_enabled_notif));
-*/
     }
 
     protected BroadcastReceiver stopReceiver = new BroadcastReceiver() {
@@ -127,34 +127,28 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private void loginToFirebase() {
 
-//Authenticate with Firebase, using the email and password we created earlier//
+        fbAuth.signInAnonymously()
+                .addOnCompleteListener(this,
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
 
-        String email = getString(R.string.test_email);
-        String password = getString(R.string.test_password);
+                                if (!task.isSuccessful()) {
+                                    requestLocationUpdates();
+                                    //         "Authentication failed. "
+                                    //               + task.getException(),
+                                    //       Toast.LENGTH_SHORT).show();
+                                } else {
+                                    //softButton.setText("Create an Account");
+                                    //  buttonMode = CREATE_MODE;
+                                }
+                            }
+                        });
 
 //Call OnCompleteListener if the user is signed in successfully//
 
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-                email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(Task<AuthResult> task) {
+    };
 
-//If the user has been authenticated...//
-
-                if (task.isSuccessful()) {
-
-//...then call requestLocationUpdates//
-
-                    requestLocationUpdates();
-                } else {
-
-//If sign in fails, then log the error//
-
-                    //Log.d(TAG, "Firebase authentication failed");
-                }
-            }
-        });
-    }
 
 //Initiate the request to track the device's location//
 
@@ -221,7 +215,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 //If the user denies the permission request, then display a toast with some more information//
 
-            Toast.makeText(this, "Please enable location services to allow GPS tracking", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Please enable location services to allow GPS tracking", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -240,7 +234,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
-        Sensor sensor2;
+        //Sensor sensor2;
         // code for system's orientation sensor registered listeners
         SensorManage.registerListener(this, SensorManage.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
